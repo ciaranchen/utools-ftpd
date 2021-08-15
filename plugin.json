@@ -1,0 +1,16 @@
+{
+  "logo": "logo.png",
+  "preload": "preload.js",
+  "features": [{
+    "code": "serv-start",
+    "explain": "启动ftp服务器",
+    "cmds": [{
+      "type": "files",
+      "label": "在此文件夹启动FTP服务器"
+    }]
+  }, {
+    "code": "serv-stop",
+    "explain": "关闭ftp服务器",
+    "cmds": ["ftpd-down"]
+  }]
+}
