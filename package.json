@@ -1,0 +1,10 @@
+{
+  "name": "utools-ftpd",
+  "version": "1.0.2",
+  "description": "uTools插件。在特定文件夹启动FTP服务器，以实现PC和移动端的数据传输。",
+  "author": "ciaranchen",
+  "license": "MIT",
+  "dependencies": {
+    "ftpd": "^0.2.16"
+  }
+}
