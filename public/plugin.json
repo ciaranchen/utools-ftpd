@@ -1,7 +1,12 @@
 {
+  "main": "index.html",
   "logo": "logo.png",
   "preload": "preload.js",
   "features": [{
+    "code": "server-ui",
+    "explain": "FTP服务器设置",
+    "cmds": ["ftpd"]
+  }, {
     "code": "serv-start",
     "explain": "启动ftp服务器",
     "cmds": [{
