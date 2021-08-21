@@ -47,7 +47,7 @@ export default class App extends React.Component {
     this.state = {
       isChanged: false,
       status: window.service.get_server_status(),
-      // below is options
+      // options for nodeftpd.
       port: 21,
       username: '',
       password: '',
@@ -59,8 +59,9 @@ export default class App extends React.Component {
     this.clickRestartServer = this.clickRestartServer.bind(this);
     // Restore and submit
     this.clickRestoreSettings = this.clickRestoreSettings.bind(this);
-    this.clickSaveSettings = this.clickRestoreSettings.bind(this);
-    // TODO: the onChange functions.
+    this.clickSaveSettings = this.clickSaveSettings.bind(this);
+    // onChange
+    this.handleChange = this.handleChange.bind(this);
     // TODO: the password visitable functions.
   };
 
@@ -79,6 +80,11 @@ export default class App extends React.Component {
     this.updateServerStatus();
   }
 
+  handleChange(event) {
+    const name = event.target.name;
+    this.setState({[name]: event.target.value});
+  }
+
   clickRestoreSettings () {
     const options = window.utools.db.get('ftpd_options').data;
     this.setState(options);
@@ -87,6 +93,19 @@ export default class App extends React.Component {
   clickSaveSettings (e) {
     e.preventDefault();
     // TODO: Save to utools db.
+    let options = {};
+    for (let k in this.state) {
+      if (k == 'username' || k == 'password') {
+        options[k] = this.state[k];
+      }
+      if (k == 'location' || k == 'port') {
+        options[k] = this.state[k];
+      }
+    }
+    console.log(options);
+    let rev = window.utools.db.get('ftpd_options')._rev
+    window.utools.db.put({_id: 'ftpd_options', data: options, _rev: rev});
+    window.utools.showNotification('保存成功: ' + options);
   }
 
   updateServerStatus () {
@@ -108,15 +127,23 @@ export default class App extends React.Component {
 
     // 进入插件
     window.utools.onPluginEnter(({ code, type, payload }) => {
-      if (code == 'server-ui') {
-        // TODO: show server status.
-      } else {
-        console.log('HideMainWindow');
+      if (code != 'server-ui') {
+        if (code == 'serv-start') {
+          const options = {
+            username: this.state.username,
+            password: this.state.password,
+            port: this.state.port,
+            location: payload[0].path
+          };
+          window.service.start_server(options, true);
+          this.updateServerStatus();
+        }
+        if (code == 'serv-stop') {
+          this.clickStopServer();
+        }
+        // console.log('HideMainWindow');
         window.utools.hideMainWindow();
       }
-      console.log(code);
-      console.log(type);
-      console.log(payload);
       this.setState({ code });
     })
     // 退出插件
@@ -149,24 +176,26 @@ export default class App extends React.Component {
       </Container>
 
       <Container>
-        <form noValidate autoComplete="off" onSubmit={clickSaveSettings}>
+        <form noValidate autoComplete="off" onSubmit={this.clickSaveSettings}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
-              <TextField required fullWidth id="username_input" label="Username" value={this.state.username} disabled={this.state.status} />
+              <TextField required fullWidth id="username_input" name="username" label="Username" value={this.state.username} disabled={this.state.status} onChange={this.handleChange} />
             </Grid>
             <Grid item xs={6}>
-              <TextField required fullWidth id="password_input" label="Password" value={this.state.password} disabled={this.state.status} type="password" />
+              <TextField required fullWidth id="password_input" name="password" label="Password" value={this.state.password} disabled={this.state.status} onChange={this.handleChange} type="password" />
             </Grid>
             <Grid item xs={8}>
-              <TextField required fullWidth id="location_input" label="Location" value={this.state.location} disabled={this.state.status} />
+              <TextField required fullWidth id="location_input" name="location" label="Location" value={this.state.location} disabled={this.state.status} onChange={this.handleChange} />
             </Grid>
             <Grid item xs={4}>
               <TextField
                 id="port_input"
                 label="Port"
+                name="port"
                 type="number"
                 value={this.state.port}
                 disabled={this.state.status}
+                onChange={this.handleChange}
               />
             </Grid>
             <Grid item xs={8}></Grid>
@@ -174,15 +203,13 @@ export default class App extends React.Component {
               <Button variant="contained" onClick={this.clickRestoreSettings}>
                 恢复
               </Button>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" type="submit">
                 保存
               </Button>
             </Grid>
-            
           </Grid>
         </form>
       </Container>
-
     </ThemeProvider>
     )
   }
