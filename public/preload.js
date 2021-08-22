@@ -1,20 +1,30 @@
 const ftpd = require('ftpd');
-const path = require('path');
 
-// Default settings for FTP Server
-let options = {
-  port: 21,
-  username: 'ftp',
-  password: 'ftp',
-  location: 'C:\\'
+let LOG = {
+  ERROR: 0,
+  WARN: 1,
+  INFO: 2,
+  DEBUG: 3,
+  TRACE: 4,
 };
 
-let server = new ftpd.FtpServer(options.host, {
+// Default settings for FTP Server
+let defaultOptions = {
+  port: 21,
+  location: 'D:\\'
+};
+
+let user_pass = {
+  username: 'ftp',
+  password: 'ftp',
+}
+
+let server = new ftpd.FtpServer(defaultOptions.host, {
   getInitialCwd: function () {
     return '/';
   },
   getRoot: function () {
-    return options.location;
+    return defaultOptions.location;
   },
   pasvPortRangeStart: 1025,
   pasvPortRangeEnd: 1050,
@@ -37,7 +47,7 @@ server.on('client:connected', function (connection) {
   var username = null;
   console.log('client connected: ' + connection.remoteAddress);
   connection.on('command:user', function (user, success, failure) {
-    if (user === options.username) {
+    if (user === user_pass.username) {
       username = user;
       success();
     } else {
@@ -46,7 +56,7 @@ server.on('client:connected', function (connection) {
   });
 
   connection.on('command:pass', function (pass, success, failure) {
-    if (pass === options.password) {
+    if (pass === user_pass.password) {
       success(username);
     } else {
       failure();
@@ -55,6 +65,28 @@ server.on('client:connected', function (connection) {
 });
 server.debugging = 4;
 
+server._logIf = function(verbosity, message, conn) {
+  if (verbosity > this.debugging) {
+    return;
+  }
+  // TODO: Move this to FtpConnection.prototype._logIf.
+  var peerAddr = (conn && conn.socket && conn.socket.remoteAddress);
+  if (peerAddr) {
+    message = '<' + peerAddr + '> ' + message;
+  }
+  if (verbosity === LOG.ERROR) {
+    message = 'ERROR: ' + message;
+  } else if (verbosity === LOG.WARN) {
+    message = 'WARNING: ' + message;
+  }
+  console.log(message);
+  var isError = (verbosity === LOG.ERROR);
+  if (isError && this.debugging === LOG.TRACE) {
+    console.trace('Trace follows');
+    window.utools.showNotification('FTPD ' + message);
+  }
+};
+
 
 // service: start or stop service.
 window.service = {
@@ -62,36 +94,19 @@ window.service = {
     return server;
   },
   start_server: function (options, isRestart=false) {
+    console.log("Starting service...")
     if (isRestart && server.server.listening) {
       server.close();
     }
     server.getRoot = () => options.location;
-    server.on('client:connected', function (connection) {
-      // 设置用户名密码
-      var username = null;
-      console.log('client connected: ' + connection.remoteAddress);
-      connection.on('command:user', function (user, success, failure) {
-        if (user === options.username) {
-          username = user;
-          success();
-        } else {
-          failure();
-        }
-      });
-
-      connection.on('command:pass', function (pass, success, failure) {
-        if (pass === options.password) {
-          success(username);
-        } else {
-          failure();
-        }
-      });
-    });
+    user_pass.username = options.username;
+    user_pass.password = options.password;
     server.listen(options.port);
     window.utools.showNotification('FTP服务器已启动: ' + server.getRoot());
   },
   stop_server: function() {
     server.close();
+    window.utools.showNotification('FTP服务器已停止');
   },
   get_server_status: function () {
     return server.server.listening;

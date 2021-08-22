@@ -6,7 +6,7 @@ let default_options = {
   port: 21,
   username: 'ftp',
   password: 'ftp',
-  location: 'C:\\'
+  location: 'D:\\'
 };
 
 const themeDic = {
@@ -47,7 +47,7 @@ export default class App extends React.Component {
     this.state = {
       isChanged: false,
       status: window.service.get_server_status(),
-      // options for nodeftpd.
+      // options.
       port: 21,
       username: '',
       password: '',
@@ -105,7 +105,7 @@ export default class App extends React.Component {
     console.log(options);
     let rev = window.utools.db.get('ftpd_options')._rev
     window.utools.db.put({_id: 'ftpd_options', data: options, _rev: rev});
-    window.utools.showNotification('保存成功: ' + options);
+    window.utools.showNotification('保存成功, 下次启动生效');
   }
 
   updateServerStatus () {
@@ -150,7 +150,6 @@ export default class App extends React.Component {
     window.utools.onPluginOut(() => {
       this.setState({ code: '' })
     })
-    console.log(this);
   }
 
   render () {
