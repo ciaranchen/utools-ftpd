@@ -2,11 +2,17 @@
 
 在特定文件夹启动FTP服务器，以实现PC和移动端的数据传输。
 
+敲击`ftpd`进入配置界面。修改ftp服务器配置并启动或停止服务。
+
+此外你还可以拖动文件夹进入utools，并选择`在此文件夹中启动ftp服务器`，来快速地启动一个FTP服务器。
+
 默认用户名密码皆为`ftp`.
 
-<!-- TODO: 添加文档 -->
+在手机上需要安装FTP客户端，用客户端去连接；安卓手机推荐「实简FTP」或「AndFTP」，在iOS手机上推荐「Documents by Readdle」或者「FTP Manager」。
+
+不清楚如何连接FTP的话，在`https://github.com/ciaranchen/utools-ftpd#readme`有一些说明。
+
 <!-- TODO: 服务器启动期间仍可以修改设置。 -->
-<!-- TODO: 界面黑暗模式 -->
 
 ## 如何连接FTP
 
@@ -67,3 +73,8 @@
 > v1.0.2
 
 添加描述和使用说明。
+
+> v1.1.0
+
+更改logo。
+添加使用界面。
