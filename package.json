@@ -28,7 +28,9 @@
   },
   "scripts": {
     "dev": "webpack -w",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "mkdir": "mkdir dist\\node_modules\\ftpd dist\\node_modules\\stat-mode dist\\node_modules\\dateformat",
+    "copy": "xcopy node_modules\\ftpd dist\\node_modules\\ftpd /Y /e && xcopy /e node_modules\\stat-mode dist\\node_modules\\stat-mode /Y && xcopy /e node_modules\\dateformat dist\\node_modules\\dateformat /Y"
   },
   "author": "ciaranchen",
   "license": "MIT",

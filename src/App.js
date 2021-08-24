@@ -1,6 +1,6 @@
 import React from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles'
-import { ButtonGroup, Button, Paper, TextField, Typography, Grid, Container } from '@material-ui/core/';
+import { ButtonGroup, Button, TextField, Grid, Container } from '@material-ui/core/';
 
 let default_options = {
   port: 21,
@@ -90,8 +90,10 @@ export default class App extends React.Component {
     this.setState(options);
   }
 
-  clickSaveSettings (e) {
-    e.preventDefault();
+  clickSaveSettings (e, notify=true) {
+    if (e) {
+      e.preventDefault();
+    }
     // TODO: Save to utools db.
     let options = {};
     for (let k in this.state) {
@@ -105,7 +107,9 @@ export default class App extends React.Component {
     console.log(options);
     let rev = window.utools.db.get('ftpd_options')._rev
     window.utools.db.put({_id: 'ftpd_options', data: options, _rev: rev});
-    window.utools.showNotification('保存成功, 下次启动生效');
+    if (notify) {
+      window.utools.showNotification('保存成功, 下次启动生效');
+    }
   }
 
   updateServerStatus () {
@@ -129,19 +133,14 @@ export default class App extends React.Component {
     window.utools.onPluginEnter(({ code, type, payload }) => {
       if (code != 'server-ui') {
         if (code == 'serv-start') {
-          const options = {
-            username: this.state.username,
-            password: this.state.password,
-            port: this.state.port,
-            location: payload[0].path
-          };
-          window.service.start_server(options, true);
+          this.setState({location: payload[0].path});
+          this.clickSaveSettings(null, false);
+          window.service.start_server(this.state, true);
           this.updateServerStatus();
         }
         if (code == 'serv-stop') {
           this.clickStopServer();
         }
-        // console.log('HideMainWindow');
         window.utools.hideMainWindow();
       }
       this.setState({ code });
@@ -160,9 +159,7 @@ export default class App extends React.Component {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <Typography variant="body1" gutterBottom>
-              服务状态: {this.state.status? 'ON': 'OFF'}
-            </Typography>
+            服务状态: {this.state.status? 'ON': 'OFF'}
           </Grid>
           <Grid item xs={6}>
             <ButtonGroup color="primary" aria-label="outlined primary button group">
