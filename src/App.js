@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 import { ButtonGroup, Button, TextField, Grid, Container } from '@material-ui/core/';
 
 let default_options = {
+  host: '127.0.0.1',
   port: 21,
   username: 'ftp',
   password: 'ftp',
@@ -47,7 +48,8 @@ export default class App extends React.Component {
     this.state = {
       isChanged: false,
       status: window.service.get_server_status(),
-      // options.
+      // options
+      host: '',
       port: 21,
       username: '',
       password: '',
@@ -90,6 +92,7 @@ export default class App extends React.Component {
     this.setState(options);
   }
 
+  // TODO: fix this with host.
   clickSaveSettings (e, notify=true) {
     if (e) {
       e.preventDefault();
@@ -100,7 +103,10 @@ export default class App extends React.Component {
       if (k == 'username' || k == 'password') {
         options[k] = this.state[k];
       }
-      if (k == 'location' || k == 'port') {
+      if (k == 'host' || k == 'port') {
+        options[k] = this.state[k];
+      }
+      if (k == 'location') {
         options[k] = this.state[k];
       }
     }
@@ -181,18 +187,14 @@ export default class App extends React.Component {
               <TextField required fullWidth id="password_input" name="password" label="Password" value={this.state.password} disabled={this.state.status} onChange={this.handleChange} type="password" />
             </Grid>
             <Grid item xs={8}>
-              <TextField required fullWidth id="location_input" name="location" label="Location" value={this.state.location} disabled={this.state.status} onChange={this.handleChange} />
+              <TextField required fullWidth id="host_input" name="host" label="Host"  value={this.state.host} disabled={this.state.status} onChange={this.handleChange} />
             </Grid>
             <Grid item xs={4}>
-              <TextField
-                id="port_input"
-                label="Port"
-                name="port"
-                type="number"
-                value={this.state.port}
-                disabled={this.state.status}
-                onChange={this.handleChange}
+              <TextField required fullWidth id="port_input" name="port" label="Port" type="number" value={this.state.port} disabled={this.state.status} onChange={this.handleChange}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField required fullWidth id="location_input" name="location" label="Location" value={this.state.location} disabled={this.state.status} onChange={this.handleChange} />
             </Grid>
             <Grid item xs={8}></Grid>
             <Grid item xs={4}>

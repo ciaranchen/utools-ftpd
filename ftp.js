@@ -1,6 +1,7 @@
 const ftpd = require('ftpd');
 const path = require('path');
 
+// options.host 应为本机的ip地址，这会传递给ftp client。
 let options = {
   host: '0.0.0.0',
   port: 21,
