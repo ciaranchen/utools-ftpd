@@ -26,10 +26,6 @@
 
 ![b264cf0fa98636f6a03443c7b53da16](README.assets/b264cf0fa98636f6a03443c7b53da16.jpg)
 
-有的软件还需要设置传输模式为「主动」。
-
-![8a3f260d44ac20af858df5c6b75e7a4](README.assets/8a3f260d44ac20af858df5c6b75e7a4.jpg)
-
 连接完成后如图。
 
 ![24165cc60eeb1c4184dc340272ab65c](README.assets/24165cc60eeb1c4184dc340272ab65c.jpg)
@@ -46,10 +42,6 @@
 输入主机、登录用户名、密码。
 
 ![489a0117e66a168c731b9c75c390065](README.assets/489a0117e66a168c731b9c75c390065.png)
-
-需要点击上图的「兼容」，并打开「跳过PASV IP地址」。
-
-![1d1e32c7a5b7be618edbf2f64743099](README.assets/1d1e32c7a5b7be618edbf2f64743099.png)
 
 完成后效果如下图。
 
@@ -78,3 +70,7 @@
 
 更改logo。
 添加使用界面。
+
+> v1.1.1
+
+添加IP地址设置，不必额外设置PASV模式。

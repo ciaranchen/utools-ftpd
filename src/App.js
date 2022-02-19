@@ -40,7 +40,8 @@ const themeDic = {
   })
 };
 
-
+// TODO: Better 用户设置
+// TODO: Better Host设置（用户可自定义）
 export default class App extends React.Component {
   theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
