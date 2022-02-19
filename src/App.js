@@ -1,7 +1,8 @@
 import React from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles'
-import { ButtonGroup, Button, TextField, Grid, Container } from '@material-ui/core/';
+import { ButtonGroup, Button, TextField, Grid, Container, MenuItem } from '@material-ui/core/';
 
+// get default options
 let default_options = {
   host: '127.0.0.1',
   port: 21,
@@ -45,9 +46,10 @@ export default class App extends React.Component {
 
   constructor (props) {
     super(props);
+    this.host_options = window.service.getIPAddress();
     this.state = {
       isChanged: false,
-      status: window.service.get_server_status(),
+      status: window.service.get_server_status(default_options),
       // options
       host: '',
       port: 21,
@@ -119,7 +121,7 @@ export default class App extends React.Component {
   }
 
   updateServerStatus () {
-    this.setState({status: window.service.get_server_status()});
+    this.setState({status: window.service.get_server_status(default_options)});
   }
 
   componentDidMount () {
@@ -187,7 +189,20 @@ export default class App extends React.Component {
               <TextField required fullWidth id="password_input" name="password" label="Password" value={this.state.password} disabled={this.state.status} onChange={this.handleChange} type="password" />
             </Grid>
             <Grid item xs={8}>
-              <TextField required fullWidth id="host_input" name="host" label="Host"  value={this.state.host} disabled={this.state.status} onChange={this.handleChange} />
+            <TextField
+              required fullWidth select
+              id="host_input" name="host" label="Host"
+              value={this.state.host} disabled={this.state.status} onChange={this.handleChange}
+              variant="standard"
+            >
+              {this.host_options.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+                
+              {/* <TextField required fullWidth id="host_input" name="host" label="Host"  value={this.state.host} disabled={this.state.status} onChange={this.handleChange} /> */}
             </Grid>
             <Grid item xs={4}>
               <TextField required fullWidth id="port_input" name="port" label="Port" type="number" value={this.state.port} disabled={this.state.status} onChange={this.handleChange}
