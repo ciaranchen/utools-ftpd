@@ -3,7 +3,7 @@ const path = require('path');
 
 // options.host 应为本机的ip地址，这会传递给ftp client。
 let options = {
-  host: '0.0.0.0',
+  host: '127.0.0.1',
   port: 21,
 };
 
@@ -36,21 +36,11 @@ server.on('client:connected', function (connection) {
   var username = null;
   console.log('client connected: ' + connection.remoteAddress);
   connection.on('command:user', function (user, success, failure) {
-    if (user === 'ftp') {
-      console.log(user);
-      username = user;
-      success();
-    } else {
-      failure();
-    }
+    success();
   });
 
   connection.on('command:pass', function (pass, success, failure) {
-    if (pass === 'ftp') {
-      success(username);
-    } else {
-      failure();
-    }
+    success('anonymous');
   });
 });
 server.debugging = 4;

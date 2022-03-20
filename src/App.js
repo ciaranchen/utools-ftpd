@@ -1,6 +1,6 @@
 import React from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles'
-import { ButtonGroup, Button, TextField, Grid, Container, MenuItem } from '@material-ui/core/';
+import { ButtonGroup, Button, TextField, Grid, Container, MenuItem, FormControlLabel, Checkbox } from '@material-ui/core/';
 
 // get default options
 let default_options = {
@@ -56,7 +56,8 @@ export default class App extends React.Component {
       port: 21,
       username: '',
       password: '',
-      location: ''
+      location: '',
+      need_authentication: false,
     };
     // manage server status
     this.clickStartServer = this.clickStartServer.bind(this);
@@ -87,6 +88,10 @@ export default class App extends React.Component {
 
   handleChange(event) {
     const name = event.target.name;
+    if (name === 'need_authentication') {
+      this.setState({[name]: event.target.checked});
+      return ;
+    }
     this.setState({[name]: event.target.value});
   }
 
@@ -183,11 +188,14 @@ export default class App extends React.Component {
       <Container>
         <form noValidate autoComplete="off" onSubmit={this.clickSaveSettings}>
           <Grid container spacing={3}>
-            <Grid item xs={6}>
-              <TextField required fullWidth id="username_input" name="username" label="Username" value={this.state.username} disabled={this.state.status} onChange={this.handleChange} />
+            <Grid item xs={2}>
+              <FormControlLabel control={<Checkbox />} name="need_authentication" label="Need Auth" checked={this.state.need_authentication} onChange={this.handleChange} disabled={this.state.status} />
             </Grid>
-            <Grid item xs={6}>
-              <TextField required fullWidth id="password_input" name="password" label="Password" value={this.state.password} disabled={this.state.status} onChange={this.handleChange} type="password" />
+            <Grid item xs={5}>
+              <TextField required fullWidth id="username_input" name="username" label="Username" value={this.state.username} disabled={this.state.status || !this.state.need_authentication} onChange={this.handleChange} />
+            </Grid>
+            <Grid item xs={5}>
+              <TextField required fullWidth id="password_input" name="password" label="Password" value={this.state.password} disabled={this.state.status || !this.state.need_authentication} onChange={this.handleChange} type="password" />
             </Grid>
             <Grid item xs={8}>
             <TextField

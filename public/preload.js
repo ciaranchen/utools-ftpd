@@ -29,6 +29,10 @@ function create_server(options) {
     var username = null;
     console.log('client connected: ' + connection.remoteAddress);
     connection.on('command:user', function (user, success, failure) {
+      if (!options.need_authentication) {
+        success();
+        return;
+      }
       if (user === options.username) {
         username = user;
         success();
@@ -38,6 +42,10 @@ function create_server(options) {
     });
 
     connection.on('command:pass', function (pass, success, failure) {
+      if (!options.need_authentication) {
+        success('anonymous');
+        return;
+      }
       if (pass === options.password) {
         success(username);
       } else {
@@ -45,7 +53,6 @@ function create_server(options) {
       }
     });
   });
-
   return server;
 }
 
@@ -100,7 +107,7 @@ window.service = {
 
     console.log("Starting service...")
     server.listen(options.port);
-    window.utools.showNotification('FTP服务器已启动: ' + server.getRoot());
+    // window.utools.showNotification('FTP服务器已启动: ' + server.getRoot());
   },
   stop_server: function () {
     server.close();
