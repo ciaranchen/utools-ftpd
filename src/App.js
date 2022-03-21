@@ -1,6 +1,10 @@
 import React from 'react'
-import { createTheme, ThemeProvider } from '@material-ui/core/styles'
+import { createTheme, ThemeProvider, styled } from '@material-ui/core/styles'
 import { ButtonGroup, Button, TextField, Grid, Container, MenuItem, FormControlLabel, Checkbox } from '@material-ui/core/';
+
+const Input = styled('input')({
+  display: 'none',
+});
 
 // get default options
 let default_options = {
@@ -40,8 +44,6 @@ const themeDic = {
   })
 };
 
-// TODO: Better 用户设置
-// TODO: Better Host设置（用户可自定义）
 export default class App extends React.Component {
   theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
@@ -68,6 +70,7 @@ export default class App extends React.Component {
     this.clickSaveSettings = this.clickSaveSettings.bind(this);
     // onChange
     this.handleChange = this.handleChange.bind(this);
+    this.handleFileSelectionChange = this.handleFileSelectionChange.bind(this);
     // TODO: the password visitable functions.
   };
 
@@ -84,6 +87,13 @@ export default class App extends React.Component {
   clickRestartServer () {
     window.service.start_server(this.state, true);
     this.updateServerStatus();
+  }
+
+  handleFileSelectionChange (e) {
+    let path = e.target.files[0].path;
+    console.log(path);
+    path = path.substring(0, path.lastIndexOf('\\')+1);
+    this.setState({"location": path});
   }
 
   handleChange(event) {
@@ -171,7 +181,7 @@ export default class App extends React.Component {
     return (
     <ThemeProvider theme={themeDic[theme]}>
       <Container>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           <Grid item xs={6}>
             服务状态: {this.state.status? 'ON': 'OFF'}
           </Grid>
@@ -217,15 +227,25 @@ export default class App extends React.Component {
               <TextField required fullWidth id="port_input" name="port" label="Port" type="number" value={this.state.port} disabled={this.state.status} onChange={this.handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={10}>
               <TextField required fullWidth id="location_input" name="location" label="Location" value={this.state.location} disabled={this.state.status} onChange={this.handleChange} />
             </Grid>
+            <Grid item xs={2}>
+              <label htmlFor="contained-button-file">
+                <Input id="contained-button-file" type="file" onChange={this.handleFileSelectionChange}/>
+                <Button variant="contained" component="span" >
+                  Select
+                </Button>
+              </label>
+            </Grid>
             <Grid item xs={8}></Grid>
-            <Grid item xs={4}>
-              <Button variant="contained" onClick={this.clickRestoreSettings}>
+            <Grid item xs={2}>
+              <Button fullWidth variant="contained" color="secondary" onClick={this.clickRestoreSettings}>
                 恢复
               </Button>
-              <Button variant="contained" color="primary" type="submit">
+            </Grid>
+            <Grid item xs={2}>
+              <Button fullWidth variant="contained" color="primary" type="submit">
                 保存
               </Button>
             </Grid>
